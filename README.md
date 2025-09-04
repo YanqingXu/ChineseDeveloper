@@ -42,17 +42,17 @@
 ### 支持的编程语言
 
 ```
-✅ Python        - python_prompts_*.md (三个版本)
-✅ JavaScript    - javascript_prompts_*.md (三个版本)
-✅ TypeScript    - typescript_prompts_*.md (三个版本) 🆕
-✅ Java          - java_prompts_*.md (三个版本)
-✅ C++           - cpp_prompts_*.md (三个版本)
-✅ C             - c_prompts_*.md (三个版本) 🆕
-✅ Go            - go_prompts_*.md (三个版本)
-✅ Rust          - rust_prompts_*.md (三个版本)
+✅ Python        - python/prompts_*.md (三个版本)
+✅ JavaScript    - javascript/prompts_*.md (三个版本)
+✅ TypeScript    - typescript/prompts_*.md (三个版本) 🆕
+✅ Java          - java/prompts_*.md (三个版本)
+✅ C++           - cpp/prompts_*.md (三个版本)
+✅ C             - c/prompts_*.md (三个版本) 🆕
+✅ Go            - go/prompts_*.md (三个版本)
+✅ Rust          - rust/prompts_*.md (三个版本)
 ```
 
-**总计支持：9种主流编程语言，每种语言3个版本，共27套专业模板**
+**总计支持：8种主流编程语言，每种语言3个版本，共24套专业模板**
 
 ### 上下文自适应机制
 
@@ -92,46 +92,50 @@ prompts/
 ├── quality_assurance_framework.md     # 质量保证和测试框架
 ├── ide_optimized_workflow.md          # 完整工作流程文档
 │
-├── 完整版提示词模板 (Full Version - 150K-200K tokens)
-│   ├── python_prompts_full.md         # Python完整版
-│   ├── javascript_prompts_full.md     # JavaScript完整版
-│   ├── typescript_prompts_full.md     # TypeScript完整版 🆕
-│   ├── java_prompts_full.md           # Java完整版
-│   ├── cpp_prompts_full.md            # C++完整版
-│   ├── c_prompts_full.md              # C语言完整版 🆕
-│   ├── go_prompts_full.md             # Go完整版
-│   └── rust_prompts_full.md           # Rust完整版
+├── python/                            # Python语言提示词模板
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
 │
-├── 标准版提示词模板 (Standard Version - 80K-128K tokens)
-│   ├── python_prompts_standard.md     # Python标准版
-│   ├── javascript_prompts_standard.md # JavaScript标准版
-│   ├── typescript_prompts_standard.md # TypeScript标准版 🆕
-│   ├── java_prompts_standard.md       # Java标准版
-│   ├── cpp_prompts_standard.md        # C++标准版
-│   ├── c_prompts_standard.md          # C语言标准版 🆕
-│   ├── go_prompts_standard.md         # Go标准版
-│   └── rust_prompts_standard.md       # Rust标准版
+├── javascript/                        # JavaScript语言提示词模板
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
 │
-├── 精简版提示词模板 (Compact Version - 8K-16K tokens)
-│   ├── python_prompts_compact.md      # Python精简版
-│   ├── javascript_prompts_compact.md  # JavaScript精简版
-│   ├── typescript_prompts_compact.md  # TypeScript精简版 🆕
-│   ├── java_prompts_compact.md        # Java精简版
-│   ├── cpp_prompts_compact.md         # C++精简版
-│   ├── c_prompts_compact.md           # C语言精简版 🆕
-│   ├── go_prompts_compact.md          # Go精简版
-│   └── rust_prompts_compact.md        # Rust精简版
+├── typescript/                        # TypeScript语言提示词模板 🆕
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
 │
-└── 原有模板 (兼容性保留)
-    ├── python_prompts.md              # Python原版模板
-    ├── javascript_prompts.md          # JavaScript原版模板
-    ├── java_prompts.md                # Java原版模板
-    ├── cpp_prompts.md                 # C++原版模板
-    ├── go_prompts.md                  # Go原版模板
-    └── rust_prompts.md                # Rust原版模板
+├── java/                              # Java语言提示词模板
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
+│
+├── cpp/                               # C++语言提示词模板
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
+│
+├── c/                                 # C语言提示词模板 🆕
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
+│
+├── go/                                # Go语言提示词模板
+│   ├── prompts_full.md                # 完整版 (150K-200K tokens)
+│   ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+│   └── prompts_compact.md             # 精简版 (8K-16K tokens)
+│
+└── rust/                              # Rust语言提示词模板
+    ├── prompts_full.md                # 完整版 (150K-200K tokens)
+    ├── prompts_standard.md            # 标准版 (80K-128K tokens)
+    └── prompts_compact.md             # 精简版 (8K-16K tokens)
 ```
 
-**总计：38个核心文件**
+**总计：28个核心文件**
+- **架构文档**: 4个通用框架文档
+- **语言模板**: 8种语言 × 3个版本 = 24个提示词模板
 
 ## 使用指南
 
@@ -195,12 +199,17 @@ AI会自动：
 - 基本功能完成
 ```
 
-#### 方法3：传统单文件处理（兼容性）
+#### 方法3：指定语言和版本（精确控制）
 
 ```
-使用原有的语言特定模板：
+使用特定语言目录的模板：
 
-"请使用Python专业模式为以下代码生成中文注释：
+"请使用Python完整版模式为以下代码生成中文注释：
+[粘贴你的代码]"
+
+或者：
+
+"请使用JavaScript标准版模式为以下代码生成中文注释：
 [粘贴你的代码]"
 ```
 
@@ -274,32 +283,32 @@ workflow.set_format_safety({
 
 每种编程语言都有专门设计的提示词模板，确保生成的注释符合该语言的特点和规范：
 
-#### Python提示词 (python_prompts.md)
+#### Python提示词 (python/prompts_*.md)
 - **特色**：PEP 257 docstring规范，类型注解支持
 - **格式**：Google/NumPy风格文档字符串
 - **重点**：面向对象设计、装饰器、生成器等Python特性
 
-#### JavaScript/TypeScript提示词 (javascript_prompts.md)
+#### JavaScript/TypeScript提示词 (javascript/prompts_*.md, typescript/prompts_*.md)
 - **特色**：JSDoc标准，ES6+特性支持
 - **格式**：标准JSDoc注释格式
 - **重点**：异步编程、函数式编程、类型系统（TS）
 
-#### Java提示词 (java_prompts.md)
+#### Java提示词 (java/prompts_*.md)
 - **特色**：Javadoc标准，企业级开发特点
 - **格式**：完整的@param、@return、@throws标签
 - **重点**：面向对象、设计模式、框架集成
 
-#### C++提示词 (cpp_prompts.md)
+#### C++提示词 (cpp/prompts_*.md)
 - **特色**：Doxygen格式，系统级编程考虑
 - **格式**：@brief、@param、@return标签
 - **重点**：内存管理、模板编程、性能优化
 
-#### Go提示词 (go_prompts.md)
+#### Go提示词 (go/prompts_*.md)
 - **特色**：Go文档规范，并发编程特点
 - **格式**：标准Go注释格式
 - **重点**：goroutine、channel、接口设计
 
-#### Rust提示词 (rust_prompts.md)
+#### Rust提示词 (rust/prompts_*.md)
 - **特色**：Rust文档规范，安全性保证
 - **格式**：///文档注释，完整的示例代码
 - **重点**：所有权系统、生命周期、零成本抽象
@@ -326,12 +335,12 @@ workflow.set_format_safety({
 
 每种编程语言都有专门优化的提示词模板：
 
-- **Python** (`python_prompts.md`)：针对Python语法和PEP规范优化
-- **JavaScript/TypeScript** (`javascript_prompts.md`)：支持现代JS/TS特性
-- **Java** (`java_prompts.md`)：企业级Java开发规范
-- **C++** (`cpp_prompts.md`)：现代C++标准和最佳实践
-- **Go** (`go_prompts.md`)：Go语言简洁性和并发特性
-- **Rust** (`rust_prompts.md`)：内存安全和所有权系统
+- **Python** (`python/prompts_*.md`)：针对Python语法和PEP规范优化
+- **JavaScript/TypeScript** (`javascript/prompts_*.md`, `typescript/prompts_*.md`)：支持现代JS/TS特性
+- **Java** (`java/prompts_*.md`)：企业级Java开发规范
+- **C++** (`cpp/prompts_*.md`)：现代C++标准和最佳实践
+- **Go** (`go/prompts_*.md`)：Go语言简洁性和并发特性
+- **Rust** (`rust/prompts_*.md`)：内存安全和所有权系统
 
 ## 使用示例
 
@@ -347,7 +356,7 @@ def authenticate_user(username: str, password: str) -> Optional[User]:
 ```
 
 **使用方法**：
-1. 打开 `python_prompts.md` 文件
+1. 打开 `python/prompts_full.md` 文件（或根据需要选择其他版本）
 2. 复制"专业模式"提示词模板
 3. 将 `{code}` 替换为上述代码
 4. 在AI对话框中执行
@@ -388,7 +397,7 @@ def authenticate_user(username: str, password: str) -> Optional[User]:
 
 **直接在AI对话框输入**：
 ```
-请使用JavaScript专业模式为以下代码生成中文注释：
+请使用JavaScript标准版模式为以下代码生成中文注释：
 
 async function fetchUserData(userId) {
     const response = await fetch(`/api/users/${userId}`);
