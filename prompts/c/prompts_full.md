@@ -116,11 +116,468 @@
 - 绝对不能修改任何标识符、宏定义或字面量
 
 ### 步骤2：代码格式化
-**格式化标准**：
-- 遵循GNU或K&R代码风格规范
-- 统一缩进（4个空格或制表符）、大括号位置
-- 优化代码布局和可读性
-- 保持C语言的简洁实用风格
+
+**🎯 可读性至上的代码格式化要求**
+
+> **核心理念**：每一条格式化规则都必须直接服务于提升代码的可读性、理解性和维护性。当规则冲突时，始终以可读性为最终判断标准。
+
+#### 2.1 视觉层次结构优化（让代码结构一目了然）
+
+**缩进规范 - 构建清晰的视觉层次**
+- **强制使用4个空格进行缩进**，严禁使用制表符(Tab)
+  - 🎯 **可读性贡献**：4个空格提供最佳的视觉层次感，既不会过于拥挤也不会过于稀疏
+  - 📊 **对比效果**：统一的空格缩进在所有编辑器中显示一致，避免Tab导致的显示差异
+
+```c
+// ❌ 可读性差：缩进不一致，层次混乱
+if(condition){
+int x=1;
+if(x>0)
+process();
+}
+
+// ✅ 可读性优：清晰的4空格缩进，层次分明
+if (condition) {
+    int x = 1;
+    if (x > 0) {
+        process();
+    }
+}
+```
+
+**嵌套层级管理 - 防止视觉疲劳**
+- 每个嵌套层级增加4个空格，最大嵌套深度建议不超过4层
+- 🎯 **可读性贡献**：过深的嵌套会造成视觉追踪困难，4层限制保持代码的可理解性
+- 超过4层嵌套时，建议重构为函数调用以提升可读性
+
+**参数对齐 - 提升参数列表可读性**
+```c
+// ✅ 长参数列表的可读性优化
+int complex_function(const char *input_buffer,
+                     size_t buffer_length,
+                     int processing_flags,
+                     callback_func_t callback,
+                     void *user_context);
+
+// ✅ 函数调用的参数对齐
+result = process_data(input_data,
+                      data_length,
+                      PROCESS_FLAG_VALIDATE | PROCESS_FLAG_NORMALIZE,
+                      error_callback,
+                      &context);
+```
+
+#### 2.2 大括号风格优化（平衡紧凑性与清晰度）
+
+**K&R风格的可读性优化**
+- **左大括号与语句同行**，前面有一个空格
+- **右大括号单独占一行**，与对应关键字对齐
+- 🎯 **可读性贡献**：K&R风格在保持紧凑的同时，右大括号的独立行清晰标示了代码块的结束
+
+```c
+// ✅ 最佳可读性的大括号风格
+if (condition) {
+    // 代码块内容清晰可见
+    process_data();
+    update_status();
+}   // 右大括号清晰标示块结束
+
+// ✅ 函数定义的可读性优化
+int calculate_result(int input) {
+    // 函数体开始位置明确
+    return input * 2;
+}   // 函数结束位置清晰
+```
+
+**单语句块的可读性处理**
+```c
+// ❌ 可读性风险：容易在修改时引入错误
+if (condition)
+    single_statement();
+
+// ✅ 可读性优：即使单语句也使用大括号，便于后续修改
+if (condition) {
+    single_statement();
+}
+```
+
+#### 2.3 逻辑分组优化（形成清晰的逻辑单元）
+
+**空白行的战略性使用**
+- **函数间分隔**：函数之间必须有且仅有一个空白行
+- **逻辑块分组**：相关的代码行组成逻辑单元，用空白行与其他逻辑分离
+- 🎯 **可读性贡献**：空白行是视觉的"呼吸空间"，帮助大脑快速识别代码的逻辑结构
+
+```c
+// ✅ 优秀的逻辑分组示例
+int process_file(const char *filename) {
+    // 第一个逻辑单元：输入验证
+    if (filename == NULL) {
+        return -1;
+    }
+
+    // 第二个逻辑单元：资源分配
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        return -1;
+    }
+
+    char *buffer = malloc(BUFFER_SIZE);
+    if (buffer == NULL) {
+        fclose(file);
+        return -1;
+    }
+
+    // 第三个逻辑单元：主要处理逻辑
+    size_t bytes_read = fread(buffer, 1, BUFFER_SIZE, file);
+    int result = process_buffer(buffer, bytes_read);
+
+    // 第四个逻辑单元：资源清理
+    free(buffer);
+    fclose(file);
+
+    return result;
+}
+```
+
+**变量声明分组**
+```c
+// ✅ 按用途分组的变量声明，提升可读性
+int process_data(void) {
+    // 文件操作相关变量
+    FILE *input_file;
+    FILE *output_file;
+
+    // 缓冲区和大小相关变量
+    char *read_buffer;
+    char *write_buffer;
+    size_t buffer_size;
+
+    // 状态和计数器变量
+    int error_count;
+    bool processing_complete;
+
+    // 主要处理逻辑...
+}
+```
+
+#### 2.4 操作符可读性优化（确保运算清晰易读）
+
+**空格使用的精确规则**
+- **二元运算符前后必须有空格**：提升运算表达式的可读性
+- **一元运算符紧贴操作数**：保持操作的紧密关联
+- 🎯 **可读性贡献**：适当的空格让运算符和操作数的关系一目了然
+
+```c
+// ❌ 可读性差：空格使用混乱
+int result=a+b*c-d/e;
+if(ptr!=NULL&&*ptr>0)
+
+// ✅ 可读性优：空格使用规范，运算关系清晰
+int result = a + b * c - d / e;
+if (ptr != NULL && *ptr > 0)
+```
+
+**复杂表达式的可读性处理**
+```c
+// ✅ 复杂表达式的可读性优化
+bool is_valid = (input_data != NULL) &&
+                (input_length > 0) &&
+                (input_length <= MAX_BUFFER_SIZE) &&
+                (validate_checksum(input_data, input_length) == 0);
+
+// ✅ 数学表达式的可读性优化
+double result = (coefficient_a * x * x) +
+                (coefficient_b * x) +
+                coefficient_c;
+```
+
+**函数调用和参数的可读性**
+```c
+// ✅ 函数调用的最佳可读性格式
+result = process_data(input_buffer, buffer_size, flags);
+
+// ✅ 多参数函数调用的换行格式
+result = complex_processing_function(
+    input_data,
+    input_length,
+    PROCESS_FLAG_VALIDATE | PROCESS_FLAG_NORMALIZE,
+    error_callback_function,
+    &user_context_data
+);
+```
+
+#### 2.5 行长度和换行优化（提升水平可读性）
+
+**80字符限制的可读性原理**
+- **每行不超过80个字符**
+- 🎯 **可读性贡献**：80字符是人眼舒适阅读的最佳宽度，避免水平滚动，支持多窗口并排显示
+
+**智能换行策略**
+```c
+// ✅ 在逻辑断点处换行，保持可读性
+if ((user_input != NULL) &&
+    (validate_user_permissions(user_input, current_context) == SUCCESS) &&
+    (system_resources_available() == true)) {
+
+    process_user_request(user_input, current_context);
+}
+
+// ✅ 字符串字面量的可读性处理
+const char *error_message =
+    "An error occurred while processing the input data. "
+    "Please check the input format and try again. "
+    "Contact support if the problem persists.";
+```
+
+#### 2.6 注释集成优化（提升文档可读性）
+
+**注释与代码的视觉关联**
+```c
+// ✅ 注释与代码的最佳视觉关联
+/*
+ * 多行注释：详细说明复杂逻辑
+ * 星号对齐，形成清晰的文档块
+ */
+int complex_algorithm(int input) {
+    int result = 0;          // 行内注释：简要说明变量用途
+
+    // 单行注释：说明下面代码块的目的
+    for (int i = 0; i < input; i++) {
+        result += calculate_step(i);    // 说明关键操作
+    }
+
+    return result;
+}
+```
+
+**Doxygen注释的可读性优化**
+```c
+/**
+ * @brief 处理用户输入数据并返回结果
+ *
+ * 这个函数接收用户输入，进行验证和处理，然后返回处理结果。
+ * 函数会自动处理各种错误情况，确保系统稳定性。
+ *
+ * @param[in]  input_data   用户输入数据指针，不能为NULL
+ * @param[in]  data_length  输入数据长度，必须大于0
+ * @param[out] result       处理结果输出指针
+ *
+ * @return 处理状态码
+ * @retval  0  处理成功
+ * @retval -1  输入参数无效
+ * @retval -2  处理过程中发生错误
+ *
+ * @note 调用者负责确保输入参数的有效性
+ * @warning 函数可能会修改全局状态，请谨慎使用
+ */
+int process_user_input(const char *input_data,
+                       size_t data_length,
+                       result_t *result);
+```
+
+#### 2.7 声明和定义的可读性优化
+
+**变量声明的视觉对齐**
+```c
+// ✅ 类型和变量名对齐，提升可读性
+int           counter;
+char         *buffer;
+size_t        buffer_size;
+const char   *error_message;
+volatile bool shutdown_flag;
+
+// ✅ 相关变量分组声明
+struct file_info {
+    int    fd;              /**< 文件描述符 */
+    char  *filename;        /**< 文件名 */
+    size_t file_size;       /**< 文件大小 */
+    time_t last_modified;   /**< 最后修改时间 */
+};
+```
+
+**函数声明的可读性格式**
+```c
+// ✅ 函数声明的最佳可读性格式
+int    process_file(const char *filename, int flags);
+void   cleanup_resources(void);
+bool   validate_input(const char *data, size_t length);
+size_t calculate_buffer_size(int input_count, int item_size);
+```
+
+**宏定义的可读性对齐**
+```c
+// ✅ 宏定义对齐，便于阅读和维护
+#define MAX_BUFFER_SIZE     4096
+#define DEFAULT_TIMEOUT     5000
+#define ERROR_INVALID_INPUT   -1
+#define ERROR_OUT_OF_MEMORY   -2
+#define SUCCESS               0
+
+// ✅ 复杂宏的可读性格式
+#define SAFE_FREE(ptr) \
+    do { \
+        if ((ptr) != NULL) { \
+            free(ptr); \
+            (ptr) = NULL; \
+        } \
+    } while (0)
+```
+
+#### 2.8 控制结构的可读性优化
+
+**switch语句的最佳可读性格式**
+```c
+// ✅ switch语句的可读性优化
+switch (operation_type) {
+case OPERATION_READ:
+    result = handle_read_operation(data, size);
+    break;
+
+case OPERATION_WRITE:
+    result = handle_write_operation(data, size);
+    break;
+
+case OPERATION_DELETE:
+    result = handle_delete_operation(data);
+    break;
+
+default:
+    log_error("Unknown operation type: %d", operation_type);
+    result = ERROR_INVALID_OPERATION;
+    break;
+}
+```
+
+**循环结构的可读性优化**
+```c
+// ✅ for循环的可读性格式
+for (int i = 0; i < array_size; i++) {
+    if (array[i] == target_value) {
+        found_index = i;
+        break;
+    }
+}
+
+// ✅ 复杂循环条件的可读性处理
+for (node_t *current = list_head;
+     current != NULL && current->data != NULL;
+     current = current->next) {
+
+    process_node_data(current->data);
+}
+
+// ✅ while循环的可读性格式
+while ((line = read_next_line(file)) != NULL) {
+    process_line(line);
+    free(line);
+}
+```
+
+#### 2.9 指针和数组的可读性优化
+
+**指针声明的可读性规则**
+```c
+// ✅ 指针声明的最佳可读性格式
+char *buffer;           // 星号紧贴变量名
+int  *array_ptr;        // 清晰表示指针类型
+void *generic_data;     // 通用指针格式
+
+// ✅ 多级指针的可读性处理
+char **string_array;    // 字符串数组指针
+int  ***matrix_ptr;     // 三维数组指针（建议避免）
+
+// ✅ 函数指针的可读性格式
+typedef int (*compare_func_t)(const void *a, const void *b);
+typedef void (*callback_func_t)(int status, void *user_data);
+```
+
+**数组操作的可读性优化**
+```c
+// ✅ 数组初始化的可读性格式
+int numbers[] = {
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10
+};
+
+// ✅ 结构体数组的可读性格式
+struct config_item settings[] = {
+    {"timeout",     "5000",  CONFIG_TYPE_INT},
+    {"buffer_size", "4096",  CONFIG_TYPE_INT},
+    {"debug_mode",  "false", CONFIG_TYPE_BOOL},
+    {NULL,          NULL,    CONFIG_TYPE_NONE}  // 终止标记
+};
+```
+
+#### 2.10 预处理器指令的可读性优化
+
+**条件编译的可读性格式**
+```c
+// ✅ 预处理器指令的可读性优化
+#ifdef DEBUG_MODE
+    #define DBG_PRINT(fmt, ...) \
+        fprintf(stderr, "[DEBUG] %s:%d: " fmt "\n", \
+                __FILE__, __LINE__, ##__VA_ARGS__)
+#else
+    #define DBG_PRINT(fmt, ...) ((void)0)
+#endif
+
+// ✅ 复杂条件编译的可读性处理
+#if defined(PLATFORM_WINDOWS)
+    #include <windows.h>
+    #define SLEEP_MS(ms) Sleep(ms)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_UNIX)
+    #include <unistd.h>
+    #define SLEEP_MS(ms) usleep((ms) * 1000)
+#else
+    #error "Unsupported platform"
+#endif
+```
+
+**头文件包含的可读性组织**
+```c
+// ✅ 头文件包含的可读性分组
+// 标准C库头文件
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+// 系统相关头文件
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+// 第三方库头文件
+#include <openssl/ssl.h>
+#include <curl/curl.h>
+
+// 项目内部头文件
+#include "common.h"
+#include "config.h"
+#include "logger.h"
+```
+
+**🎯 格式化质量要求 - 可读性至上**：
+
+**优先级层次（当规则冲突时的判断标准）**：
+1. **最高优先级**：代码逻辑的正确性和功能完整性
+2. **第二优先级**：代码的可读性和理解性
+3. **第三优先级**：代码的一致性和规范性
+4. **第四优先级**：代码的美观性和风格统一
+
+**可读性评估标准**：
+- ✅ 新团队成员能在5分钟内理解代码结构
+- ✅ 代码修改时不会因格式问题引入错误
+- ✅ 代码审查时格式不会分散对逻辑的注意力
+- ✅ 代码在不同编辑器中显示一致
+- ✅ 代码打印后仍然保持良好的可读性
+
+**格式化决策原则**：
+- 当多种格式都符合规范时，选择最有利于理解的格式
+- 当行长度限制与可读性冲突时，优先考虑逻辑清晰度
+- 当对齐规则与实际情况冲突时，优先保证代码的自然流畅
+- 遵循C语言的简洁实用风格，避免过度装饰
 
 ### 步骤3：生成深度中文注释
 
@@ -700,18 +1157,38 @@ if (handler->on_data_received != NULL) {
 
 ## 安全约束和限制
 
+### 🚨 最高优先级安全规则
+**严禁修改原始源代码文件** - 这是绝对不可违反的安全规则：
+- 🚫 **绝对禁止**对原始代码文件进行任何修改或覆盖
+- 🚫 **绝对禁止**直接编辑原始源代码目录中的文件
+- 🚫 **绝对禁止**在原始文件中添加、删除或修改任何内容
+- ✅ **必须创建**带有"_cn"后缀的副本目录进行操作
+- ✅ **仅在副本**目录中添加中文注释和格式化
+
 ### 严格禁止的操作
 - 🚫 修改任何代码逻辑或算法实现
 - 🚫 修改函数名、变量名、结构体名
 - 🚫 修改宏定义和预处理器指令
 - 🚫 改变内存管理策略和指针操作
 - 🚫 修改系统调用和API使用
+- 🚫 改变文件的原始编码格式
+- 🚫 修改编译器指令和pragma声明
 
-### 允许的操作
-- ✅ 调整代码格式和缩进
-- ✅ 添加符合Doxygen规范的注释
-- ✅ 添加有价值的行内注释
-- ✅ 优化空白字符和对齐
+### 允许的操作（仅限于提升可读性）
+- ✅ **调整代码格式和缩进**（提升视觉层次结构）
+- ✅ **添加符合Doxygen规范的注释**（提升文档可读性）
+- ✅ **添加有价值的行内注释**（提升代码理解性）
+- ✅ **优化空白字符和对齐**（提升视觉关联性）
+- ✅ **调整行长度和换行**（提升水平可读性）
+- ✅ **优化运算符空格**（提升操作符可读性）
+- ✅ **改进逻辑分组**（提升代码结构可读性）
+
+### 🎯 可读性安全原则
+**所有允许的操作都必须以提升可读性为唯一目标**：
+- 格式化修改必须让代码更容易理解
+- 注释添加必须提供有价值的信息
+- 空白调整必须改善视觉结构
+- 任何不利于可读性的修改都被严格禁止
 
 ## 执行确认
 
