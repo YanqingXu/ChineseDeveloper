@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file llex.c
  * @brief Lua词法分析器：高性能字符流到Token流转换系统
  *
@@ -250,26 +250,19 @@ const char *const luaX_tokens[] = {
  * @see luaZ_resizebuffer(), luaX_lexerror()
  */
 static void save(LexState *ls, int c) {
-    Mbuffer *b = ls->buff;                    // 获取Token构建缓冲区指针
+    Mbuffer *b = ls->buff;
 
-    // 检查缓冲区空间是否足够（需要为新字符和可能的终止符预留空间）
     if (b->n + 1 > b->buffsize) {
         size_t newsize;
 
-        // 防止整数溢出：检查当前缓冲区大小是否已达到安全上限
         if (b->buffsize >= MAX_SIZET/2) {
-            // Token长度超过限制：报告词法错误并终止分析
             luaX_lexerror(ls, "lexical element too long", 0);
         }
 
-        // 倍增策略：新缓冲区大小为当前大小的两倍
         newsize = b->buffsize * 2;
-
-        // 重新分配缓冲区：使用Lua的内存管理系统
         luaZ_resizebuffer(ls->L, b, newsize);
     }
 
-    // 将字符保存到缓冲区：使用cast宏确保类型安全
     b->buffer[b->n++] = cast(char, c);
 }
 
@@ -628,20 +621,12 @@ void luaX_syntaxerror(LexState *ls, const char *msg) {
  * @see luaS_newlstr(), luaH_setstr(), luaC_checkGC()
  */
 TString *luaX_newstring(LexState *ls, const char *str, size_t l) {
-    lua_State *L = ls->L;                     // 获取Lua状态机指针
-
-    // 创建字符串对象：使用Lua的字符串管理系统
+    lua_State *L = ls->L;
     TString *ts = luaS_newlstr(L, str, l);
-
-    // 将字符串添加到函数的常量表中：防止编译期间被回收
     TValue *o = luaH_setstr(L, ls->fs->h, ts);
 
-    // 检查是否为新添加的字符串
     if (ttisnil(o)) {
-        // 标记字符串为活跃状态：设置为布尔值true
         setbvalue(o, 1);
-
-        // 触发垃圾回收检查：保持内存使用平衡
         luaC_checkGC(L);
     }
 
@@ -714,23 +699,17 @@ TString *luaX_newstring(LexState *ls, const char *str, size_t l) {
  * @see currIsNewline(), next(), MAX_INT定义
  */
 static void inclinenumber(LexState *ls) {
-    int old = ls->current;      // 保存当前换行符字符
+    int old = ls->current;
 
-    // 断言检查：确保当前字符是换行符
     lua_assert(currIsNewline(ls));
 
-    // 跳过第一个换行符字符
     next(ls);
 
-    // 检查是否为双字符换行符（如\r\n或\n\r）
     if (currIsNewline(ls) && ls->current != old) {
-        // 当前字符仍是换行符但与前一个不同：跳过第二个字符
         next(ls);
     }
 
-    // 增加行号计数并检查溢出
     if (++ls->linenumber >= MAX_INT) {
-        // 行号溢出：报告错误（源文件过大）
         luaX_syntaxerror(ls, "chunk has too many lines");
     }
 }
@@ -814,32 +793,15 @@ static void inclinenumber(LexState *ls) {
  * @see luaZ_resizebuffer(), next(), ZIO输入抽象层
  */
 void luaX_setinput(lua_State *L, LexState *ls, ZIO *z, TString *source) {
-    // 初始化小数点分隔符：默认使用标准的'.'字符
     ls->decpoint = '.';
-
-    // 关联Lua状态机：用于内存管理和错误处理
     ls->L = L;
-
-    // 清除预读Token状态：初始时没有预读Token
     ls->lookahead.token = TK_EOS;
-
-    // 设置输入流：关联ZIO输入抽象层
     ls->z = z;
-
-    // 初始化函数状态：开始时没有关联的函数
     ls->fs = NULL;
-
-    // 初始化行号计数：源代码从第1行开始
     ls->linenumber = 1;
     ls->lastline = 1;
-
-    // 设置源代码标识：用于错误报告和调试
     ls->source = source;
-
-    // 初始化Token构建缓冲区：设置最小缓冲区大小
     luaZ_resizebuffer(ls->L, ls->buff, LUA_MINBUFFER);
-
-    // 读取输入流的第一个字符：为词法分析做准备
     next(ls);
 }
 
@@ -919,16 +881,10 @@ void luaX_setinput(lua_State *L, LexState *ls, ZIO *z, TString *source) {
  * @see strchr(), save_and_next(), 数值解析函数
  */
 static int check_next(LexState *ls, const char *set) {
-    // 在字符集中查找当前字符：使用标准库的高效实现
     if (!strchr(set, ls->current)) {
-        // 当前字符不在指定字符集中：返回失败，状态不变
         return 0;
     }
-
-    // 当前字符匹配：保存字符并移动到下一个位置
     save_and_next(ls);
-
-    // 返回成功标志
     return 1;
 }
 
@@ -1000,14 +956,11 @@ static int check_next(LexState *ls, const char *set) {
  * @see luaZ_bufflen(), luaZ_buffer(), 数值本地化处理
  */
 static void buffreplace(LexState *ls, char from, char to) {
-    size_t n = luaZ_bufflen(ls->buff);      // 获取缓冲区当前长度
-    char *p = luaZ_buffer(ls->buff);        // 获取缓冲区数据指针
+    size_t n = luaZ_bufflen(ls->buff);
+    char *p = luaZ_buffer(ls->buff);
 
-    // 从末尾向前遍历缓冲区：优化循环性能
     while (n--) {
-        // 检查当前字符是否匹配源字符
         if (p[n] == from) {
-            // 匹配时替换为目标字符
             p[n] = to;
         }
     }
@@ -1085,28 +1038,15 @@ static void buffreplace(LexState *ls, char from, char to) {
  * @see localeconv(), buffreplace(), luaO_str2d()
  */
 static void trydecpoint(LexState *ls, SemInfo *seminfo) {
-    // 获取系统locale信息：包含本地化的数值格式设置
     struct lconv *cv = localeconv();
-
-    // 保存当前的小数点分隔符：用于可能的恢复操作
     char old = ls->decpoint;
-
-    // 更新小数点分隔符：使用locale的设置，如果不可用则使用默认'.'
     ls->decpoint = (cv ? cv->decimal_point[0] : '.');
-
-    // 在缓冲区中替换小数点字符：从旧分隔符替换为新分隔符
     buffreplace(ls, old, ls->decpoint);
 
-    // 尝试使用新的小数点分隔符解析数值
     if (!luaO_str2d(luaZ_buffer(ls->buff), &seminfo->r)) {
-        // 解析仍然失败：恢复原始格式并报告错误
         buffreplace(ls, ls->decpoint, '.');
-
-        // 报告数值格式错误：两种格式都无法解析
         luaX_lexerror(ls, "malformed number", TK_NUMBER);
     }
-
-    // 成功解析：新的小数点分隔符设置被保留
 }
 
 /**
@@ -1176,37 +1116,24 @@ static void trydecpoint(LexState *ls, SemInfo *seminfo) {
  * @see luaO_str2d(), trydecpoint(), buffreplace(), check_next()
  */
 static void read_numeral(LexState *ls, SemInfo *seminfo) {
-    // 断言检查：确保当前字符是数字
     lua_assert(isdigit(ls->current));
 
-    // === 第一阶段：收集数字和小数点字符 ===
     do {
-        save_and_next(ls);      // 保存当前字符并移动到下一个
+        save_and_next(ls);
     } while (isdigit(ls->current) || ls->current == '.');
 
-    // === 第二阶段：处理科学计数法指数部分 ===
     if (check_next(ls, "Ee")) {
-        // 发现指数标记（E或e），检查可选的符号
-        check_next(ls, "+-");   // 处理可选的正负号
+        check_next(ls, "+-");
     }
 
-    // === 第三阶段：收集剩余字符（用于错误检测） ===
-    // 收集所有字母数字字符和下划线，这些字符在有效数值后
-    // 出现时会导致格式错误
     while (isalnum(ls->current) || ls->current == '_') {
         save_and_next(ls);
     }
 
-    // === 第四阶段：数值字符串处理和转换 ===
-    // 添加字符串终止符
     save(ls, '\0');
-
-    // 应用本地化小数点分隔符：将'.'替换为系统locale的分隔符
     buffreplace(ls, '.', ls->decpoint);
 
-    // 尝试将字符串转换为Lua数值
     if (!luaO_str2d(luaZ_buffer(ls->buff), &seminfo->r)) {
-        // 转换失败：可能是小数点分隔符问题，尝试更新并重试
         trydecpoint(ls, seminfo);
     }
 }
@@ -1275,24 +1202,17 @@ static void read_numeral(LexState *ls, SemInfo *seminfo) {
  * @see read_long_string(), 长字符串语法规范
  */
 static int skip_sep(LexState *ls) {
-    int count = 0;              // 等号计数器
-    int s = ls->current;        // 保存起始方括号字符（'['或']'）
+    int count = 0;
+    int s = ls->current;
 
-    // 断言检查：确保当前字符是方括号
     lua_assert(s == '[' || s == ']');
-
-    // 保存起始方括号并移动到下一个字符
     save_and_next(ls);
 
-    // 计算连续等号的数量
     while (ls->current == '=') {
-        save_and_next(ls);      // 保存等号并移动到下一个字符
-        count++;                // 增加等号计数
+        save_and_next(ls);
+        count++;
     }
 
-    // 检查分隔符是否有效：
-    // - 如果当前字符与起始方括号相同，返回等号数量（有效分隔符）
-    // - 否则返回负数表示无效分隔符（-count-1确保返回值<-1）
     return (ls->current == s) ? count : (-count) - 1;
 }
 
@@ -1374,37 +1294,29 @@ static int skip_sep(LexState *ls) {
  * @see skip_sep(), luaX_newstring(), inclinenumber()
  */
 static void read_long_string(LexState *ls, SemInfo *seminfo, int sep) {
-    int cont = 0;               // 嵌套计数器（兼容性模式使用）
-    (void)(cont);               // 避免未使用变量警告
+    int cont = 0;
+    (void)(cont);
 
-    // 跳过开始分隔符的第二个字符（第一个'['已被skip_sep处理）
     save_and_next(ls);
 
-    // 处理长字符串开始后的换行符：Lua规范要求忽略第一个换行符
     if (currIsNewline(ls)) {
-        inclinenumber(ls);      // 更新行号但不保存换行符
+        inclinenumber(ls);
     }
 
-    // === 主处理循环：逐字符处理直到找到匹配的结束分隔符 ===
     for (;;) {
         switch (ls->current) {
-            // === 文件结束错误处理 ===
             case EOZ:
-                // 根据处理类型（字符串或注释）生成不同的错误消息
                 luaX_lexerror(ls, (seminfo) ? "unfinished long string" :
                                                "unfinished long comment", TK_EOS);
-                break;  // 避免编译器警告（实际不会执行到）
+                break;
 
 #if defined(LUA_COMPAT_LSTR)
-            // === 兼容性：处理嵌套的开始分隔符 ===
             case '[': {
-                // 检查是否为匹配的嵌套开始分隔符
                 if (skip_sep(ls) == sep) {
-                    save_and_next(ls);     // 保存嵌套分隔符
-                    cont++;                // 增加嵌套计数
+                    save_and_next(ls);
+                    cont++;
 
 #if LUA_COMPAT_LSTR == 1
-                    // 兼容性级别1：对基本嵌套语法发出废弃警告
                     if (sep == 0) {
                         luaX_lexerror(ls, "nesting of [[...]] is deprecated", '[');
                     }
@@ -1414,44 +1326,36 @@ static void read_long_string(LexState *ls, SemInfo *seminfo, int sep) {
             }
 #endif
 
-            // === 处理结束分隔符 ===
             case ']': {
-                // 检查是否为匹配的结束分隔符
                 if (skip_sep(ls) == sep) {
-                    save_and_next(ls);     // 保存结束分隔符
+                    save_and_next(ls);
 
 #if defined(LUA_COMPAT_LSTR) && LUA_COMPAT_LSTR == 2
-                    // 兼容性级别2：处理嵌套计数
                     cont--;
                     if (sep == 0 && cont >= 0) {
-                        break;             // 还有未匹配的嵌套，继续处理
+                        break;
                     }
 #endif
-                    goto endloop;          // 找到匹配的结束分隔符，退出循环
+                    goto endloop;
                 }
                 break;
             }
 
-            // === 换行符处理 ===
             case '\n':
             case '\r': {
-                save(ls, '\n');           // 统一保存为\n字符
-                inclinenumber(ls);        // 更新行号计数
+                save(ls, '\n');
+                inclinenumber(ls);
 
-                // 内存优化：注释处理时避免缓冲区浪费
                 if (!seminfo) {
                     luaZ_resetbuffer(ls->buff);
                 }
                 break;
             }
 
-            // === 普通字符处理 ===
             default: {
                 if (seminfo) {
-                    // 字符串模式：保存所有字符到缓冲区
                     save_and_next(ls);
                 } else {
-                    // 注释模式：只跳过字符，不保存
                     next(ls);
                 }
             }
@@ -1459,10 +1363,7 @@ static void read_long_string(LexState *ls, SemInfo *seminfo, int sep) {
     }
 
     endloop:
-    // === 字符串对象创建（仅用于长字符串，不用于长注释） ===
     if (seminfo) {
-        // 创建字符串对象：去除开始和结束分隔符
-        // +（2+sep）跳过开始分隔符，-2*（2+sep）去除两端分隔符
         seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff) + (2 + sep),
                                          luaZ_bufflen(ls->buff) - 2*(2 + sep));
     }
@@ -1532,96 +1433,75 @@ static void read_long_string(LexState *ls, SemInfo *seminfo, int sep) {
  * @see luaX_newstring(), save(), next(), inclinenumber()
  */
 static void read_string(LexState *ls, int del, SemInfo *seminfo) {
-    // 保存开始分隔符并移动到字符串内容的第一个字符
     save_and_next(ls);
 
-    // 主循环：处理字符串内容直到遇到结束分隔符
     while (ls->current != del) {
         switch (ls->current) {
-            // === 错误情况：未结束的字符串 ===
             case EOZ:
-                // 文件结束但字符串未结束
                 luaX_lexerror(ls, "unfinished string", TK_EOS);
-                continue;   // 避免编译器警告（实际不会执行到）
+                continue;
 
             case '\n':
             case '\r':
-                // 字符串中不允许直接包含换行符（需要使用\n转义）
                 luaX_lexerror(ls, "unfinished string", TK_STRING);
-                continue;   // 避免编译器警告（实际不会执行到）
+                continue;
 
-            // === 转义序列处理 ===
             case '\\': {
-                int c;      // 存储转义后的字符
-                next(ls);   // 跳过反斜杠，读取转义字符
+                int c;
+                next(ls);
 
                 switch (ls->current) {
-                    // 标准转义序列：C语言标准定义的转义字符
-                    case 'a': c = '\a'; break;  // 响铃符（Bell）
-                    case 'b': c = '\b'; break;  // 退格符（Backspace）
-                    case 'f': c = '\f'; break;  // 换页符（Form Feed）
-                    case 'n': c = '\n'; break;  // 换行符（Line Feed）
-                    case 'r': c = '\r'; break;  // 回车符（Carriage Return）
-                    case 't': c = '\t'; break;  // 制表符（Tab）
-                    case 'v': c = '\v'; break;  // 垂直制表符（Vertical Tab）
+                    case 'a': c = '\a'; break;
+                    case 'b': c = '\b'; break;
+                    case 'f': c = '\f'; break;
+                    case 'n': c = '\n'; break;
+                    case 'r': c = '\r'; break;
+                    case 't': c = '\t'; break;
+                    case 'v': c = '\v'; break;
 
-                    // 换行转义：字符串中的实际换行转为\n字符
                     case '\n':
                     case '\r':
-                        save(ls, '\n');         // 保存换行符到缓冲区
-                        inclinenumber(ls);      // 更新行号计数
-                        continue;               // 继续处理下一个字符
+                        save(ls, '\n');
+                        inclinenumber(ls);
+                        continue;
 
-                    // 文件结束：忽略（错误会在外层循环中检测）
                     case EOZ:
                         continue;
 
-                    // 默认转义处理：数值转义或字符转义
                     default: {
                         if (!isdigit(ls->current)) {
-                            // 字符转义：\", \', \\等，直接保存转义字符
                             save_and_next(ls);
                         } else {
-                            // 数值转义：\ddd格式（最多3位十进制数）
                             int i = 0;
                             c = 0;
 
-                            // 解析最多3位数字
                             do {
                                 c = 10 * c + (ls->current - '0');
                                 next(ls);
                             } while (++i < 3 && isdigit(ls->current));
 
-                            // 检查数值范围：必须在0-255之间
                             if (c > UCHAR_MAX) {
                                 luaX_lexerror(ls, "escape sequence too large",
                                              TK_STRING);
                             }
 
-                            // 保存转义后的字符
                             save(ls, c);
                         }
-                        continue;   // 继续处理下一个字符
+                        continue;
                     }
                 }
 
-                // 保存标准转义字符并移动到下一个字符
                 save(ls, c);
                 next(ls);
                 continue;
             }
 
-            // === 普通字符处理 ===
             default:
-                // 直接保存普通字符并移动到下一个字符
                 save_and_next(ls);
         }
     }
 
-    // 保存结束分隔符并移动到字符串后的第一个字符
     save_and_next(ls);
-
-    // 创建字符串对象：去除首尾分隔符（+1和-2）
     seminfo->ts = luaX_newstring(ls, luaZ_buffer(ls->buff) + 1,
                                      luaZ_bufflen(ls->buff) - 2);
 }
@@ -1929,18 +1809,12 @@ static int llex(LexState *ls, SemInfo *seminfo) {
  * @see luaX_lookahead(), llex(), Token结构定义
  */
 void luaX_next(LexState *ls) {
-    // 更新行号跟踪：保存当前行号作为上一个Token的行号
     ls->lastline = ls->linenumber;
 
-    // 检查是否存在预读Token
     if (ls->lookahead.token != TK_EOS) {
-        // 使用预读Token：直接复制预读Token到当前Token
         ls->t = ls->lookahead;
-
-        // 清除预读状态：标记预读Token为无效
         ls->lookahead.token = TK_EOS;
     } else {
-        // 解析新Token：调用核心词法分析函数
         ls->t.token = llex(ls, &ls->t.seminfo);
     }
 }
@@ -1997,10 +1871,7 @@ void luaX_next(LexState *ls) {
  * @see luaX_next(), llex(), LL(1)语法分析
  */
 void luaX_lookahead(LexState *ls) {
-    // 断言检查：确保没有未消费的预读Token
     lua_assert(ls->lookahead.token == TK_EOS);
-
-    // 解析并存储预读Token：调用核心词法分析函数
     ls->lookahead.token = llex(ls, &ls->lookahead.seminfo);
 }
 
