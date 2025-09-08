@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lvm.c
  * @brief Lua虚拟机核心执行引擎
  *

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lua.h
  * @brief Lua 5.1.5 核心API头文件：提供完整的Lua C API接口定义
  *

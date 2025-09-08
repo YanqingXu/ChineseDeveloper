@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lapi.c
  * @brief Lua 5.1.5 C API实现：所有Lua C API函数的具体实现
  *

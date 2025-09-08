@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lauxlib.h
  * @brief Lua 5.1.5 辅助库API头文件：提供高级便利函数和实用工具
  *

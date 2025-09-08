@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lobject.c
  * @brief Lua对象系统：通用对象操作和数值处理
  *

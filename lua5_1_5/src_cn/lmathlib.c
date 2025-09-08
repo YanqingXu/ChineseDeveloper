@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lmathlib.c
  * @brief Lua数学库：完整的数学函数和数值计算支持
  *

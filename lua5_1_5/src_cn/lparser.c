@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lparser.c
  * @brief Lua语法解析器：将Lua源代码解析为抽象语法树和字节码
  *

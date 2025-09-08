@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file lbaselib.c
  * @brief Lua基础库实现：核心函数和基本操作
  *
